@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Triangle Classifier Assessment</title>
+
+    <style>
+        body {
+            font-family: sans-serif;
+            max-width: 400px;
+            margin: 40px auto;
+            padding: 20px;
+        }
+
+        .input-field {
+            margin-bottom: 12px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 4px;
+            font-weight: bold;
+        }
+
+        input {
+            width: 100%;
+            padding: 6px;
+            box-sizing: border-box;
+        }
+
+        button {
+            width: 100%;
+            padding: 10px;
+            margin-top: 10px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        #result {
+            margin-top: 20px;
+            font-weight: bold;
+            padding: 10px;
+            border: 1px solid #ccc;
+            display: none;
+        }
+    </style>
+</head>
+
+<body>
+
+    <h2>Triangle Classifier Tool</h2>
+
+    <div class="input-field">
+        <label for="sideA">Side A:</label>
+        <input type="text" id="sideA" inputmode="numeric"
+               autocomplete="off">
+    </div>
+
+    <div class="input-field">
+        <label for="sideB">Side B:</label>
+        <input type="text" id="sideB" inputmode="numeric"
+               autocomplete="off">
+    </div>
+
+    <div class="input-field">
+        <label for="sideC">Side C:</label>
+        <input type="text" id="sideC" inputmode="numeric"
+               autocomplete="off">
+    </div>
+
+    <button type="button" onclick="checkTriangle()">
+        Classify Triangle
+    </button>
+
+    <div id="result" role="status" aria-live="polite"></div>
+
+    <script>
+        const sideInputs = [
+            document.getElementById('sideA'),
+            document.getElementById('sideB'),
+            document.getElementById('sideC')
+        ];
+
+        sideInputs.forEach(function(input) {
+            input.addEventListener('beforeinput', function(event) {
+                if (
+                    event.inputType === 'insertText' &&
+                    event.data !== null &&
+                    !/^[0-9]+$/.test(event.data)
+                ) {
+                    event.preventDefault();
+                }
+            });
+
+            input.addEventListener('input', function() {
+                const originalValue = this.value;
+                const cleanedValue = originalValue.replace(/[^0-9]/g, '');
+
+                if (originalValue !== cleanedValue) {
+                    const cursorPosition = this.selectionStart;
+                    const removedBeforeCursor = originalValue
+                        .slice(0, cursorPosition)
+                        .replace(/[0-9]/g, '').length;
+
+                    this.value = cleanedValue;
+
+                    const newPosition = Math.max(
+                        0, cursorPosition - removedBeforeCursor
+                    );
+
+                    this.setSelectionRange(newPosition, newPosition);
+                }
+
+                document.getElementById('result').style.display = "none";
+            });
+        });
+
+        function checkTriangle() {
+            const rawA = document.getElementById('sideA').value.trim();
+            const rawB = document.getElementById('sideB').value.trim();
+            const rawC = document.getElementById('sideC').value.trim();
+
+            const resultBox = document.getElementById('result');
+            resultBox.style.display = "block";
+
+            if (rawA === "" && rawB === "" && rawC === "") {
+                resultBox.innerText =
+                    "Please enter the side lengths before classifying the triangle.";
+                return;
+            }
+
+            if (rawA === "" || rawB === "" || rawC === "") {
+                resultBox.innerText =
+                    "Please fill in all three side lengths.";
+                return;
+            }
+
+            const a = Number(rawA);
+            const b = Number(rawB);
+            const c = Number(rawC);
+
+            if (
+                !Number.isSafeInteger(a) ||
+                !Number.isSafeInteger(b) ||
+                !Number.isSafeInteger(c)
+            ) {
+                resultBox.innerText =
+                    "Please enter valid whole numbers.";
+                return;
+            }
+
+            if (a <= 0 || b <= 0 || c <= 0) {
+                resultBox.innerText =
+                    "Side lengths must be greater than zero.";
+                return;
+            }
+
+            if (
+                a + b <= c ||
+                a + c <= b ||
+                b + c <= a
+            ) {
+                resultBox.innerText =
+                    "Invalid Triangle: The given side lengths cannot form a triangle.";
+                return;
+            }
+
+            if (a === b && b === c) {
+                resultBox.innerText = "Equilateral Triangle";
+            } else if (a === b || a === c || b === c) {
+                resultBox.innerText = "Isosceles Triangle";
+            } else {
+                resultBox.innerText = "Scalene Triangle";
+            }
+        }
+    </script>
+
+</body>
+</html>
