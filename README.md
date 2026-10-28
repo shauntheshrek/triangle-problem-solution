@@ -1,5 +1,11 @@
 # Triangle Classifier
 
+### Submission Info
+
+- **Candidate:** Rex R.
+- **Live Demo:** https://shauntheshrek.github.io/triangle-problem-solution/
+- **Assessment Submission for Mynt - Performance Engineer Role**
+
 ## Overview
 
 A simple web application that classifies a triangle based on the lengths of its
